@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PhoneBox Games tab: which programs count as games</title>
+<style>
+@page { size: A4; margin: 16mm 16mm 18mm; }
+:root { --ink:#1b2130; --mut:#5b6472; --acc:#6d4ce0; --bg:#f4f2fd; --line:#e3e1ee; --code:#f3f4f7; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", system-ui, sans-serif; color: var(--ink); font-size: 10.3pt; line-height: 1.45; margin: 0; }
+h1 { font-size: 21pt; margin: 0 0 2mm; letter-spacing: -.01em; }
+h2 { font-size: 13pt; margin: 6mm 0 2mm; color: var(--acc); }
+h3 { font-size: 10.8pt; margin: 4mm 0 1.5mm; }
+p { margin: 0 0 2.2mm; }
+.lang { display:inline-block; font-size: 8.5pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+        color: #fff; background: var(--acc); border-radius: 99px; padding: 1mm 3mm; margin-bottom: 3mm; }
+.lead { color: var(--mut); font-size: 10.8pt; margin-bottom: 4mm; }
+code, pre { font-family: Consolas, "Cascadia Mono", monospace; font-size: 9.2pt; }
+code { background: var(--code); border-radius: 3px; padding: .2mm 1.2mm; }
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 2.5mm 3.5mm; margin: 1.5mm 0 3mm; white-space: pre-wrap; }
+.c { color: #7a8394; }
+table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; font-size: 9.6pt; }
+th, td { text-align: left; vertical-align: top; padding: 1.6mm 2.4mm; border-bottom: 1px solid var(--line); }
+th { background: var(--bg); font-weight: 700; }
+td:first-child { white-space: nowrap; font-weight: 600; }
+ol.rules { margin: 1mm 0 3mm; padding-left: 6mm; }
+ol.rules li { margin-bottom: 1.2mm; }
+.box { background: var(--bg); border-left: 3px solid var(--acc); border-radius: 0 6px 6px 0; padding: 2.5mm 4mm; margin: 2mm 0 3mm; }
+.box p:last-child { margin: 0; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.page { break-after: page; }
+.page:last-child { break-after: auto; }
+.foot { margin-top: 5mm; font-size: 8.6pt; color: var(--mut); border-top: 1px solid var(--line); padding-top: 2mm; }
+.nobreak { break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================== ENGLISH ============================== -->
+<section class="page" lang="en">
+<span class="lang">English</span>
+<h1>Games tab: choosing what counts as a game</h1>
+<p class="lead">The Games tab shows FPS, play time and hardware stats for the game you are playing. A small background
+program (the <b>collector</b>, <code>PhoneBoxGamesTab.exe</code>) decides which program is the game. Three plain-text files let you
+fine-tune that decision.</p>
+
+<h2>How the collector decides</h2>
+<p>Every second it looks at the window in the foreground. That program becomes the game when it is drawing at least
+5 frames per second and the first matching rule below says yes:</p>
+<ol class="rules">
+<li><b><code>ignore.txt</code></b>: never a game. This rule always wins.</li>
+<li><b><code>include.txt</code></b>: always a game.</li>
+<li><b>Microsoft Store / Xbox apps</b>: a game only if the Microsoft Store catalog lists it as a game
+    (so WhatsApp, Netflix and similar apps are left out automatically).</li>
+<li><b>Known game folders</b> on any drive: <code>steamapps\common</code>, <code>Epic Games</code>, <code>XboxGames</code>,
+    <code>GOG Games</code>, <code>Ubisoft Game Launcher\games</code>, <code>EA Games</code>, <code>Riot Games</code>, <code>Games</code>.</li>
+<li><b><code>folders.txt</code></b>: any program inside these folders.</li>
+<li><b>Fullscreen</b>: a window covering its whole monitor (only when no other game is open).</li>
+</ol>
+<p>Browsers, Discord, Teams, Wallpaper Engine, launchers (Steam, Epic, Battle.net, EA, Ubisoft, GOG) and similar
+programs are already ignored by a built-in list.</p>
+
+<h2>The three files</h2>
+<p>They sit in the Games Tab folder, next to the <code>bin</code> folder that holds the collector. The Portuguese names <code>incluir.txt</code>, <code>ignorar.txt</code> and <code>pastas.txt</code> work too.</p>
+<table>
+<tr><th>File</th><th>What goes in it</th><th>Example line</th></tr>
+<tr><td><code>include.txt</code></td><td>Programs that must always count as games (installed somewhere unusual, running in a window).</td><td><code>MyGame.exe</code></td></tr>
+<tr><td><code>ignore.txt</code></td><td>Programs that must never count as games (tools, video players, apps).</td><td><code>GPU-Z.exe</code></td></tr>
+<tr><td><code>folders.txt</code></td><td>Folders where you install games. Everything inside counts.</td><td><code>D:\Games</code> or <code>E:\</code></td></tr>
+</table>
+<div class="grid">
+<div class="nobreak">
+<h3>Rules for the lines</h3>
+<p>One entry per line. Everything after <code>#</code> is a comment. Upper/lower case does not matter, and
+<code>.exe</code> is optional (<code>GPU-Z</code> = <code>gpu-z.exe</code>). Folders may be written with or without the final <code>\</code>.</p>
+</div>
+<div class="nobreak">
+<h3>Example <code>ignore.txt</code></h3>
+<pre>WhatsApp.Root.exe   <span class="c"># WhatsApp (Store)</span>
+GPU-Z.exe
+SyncTrayzor.exe     <span class="c"># sync tool on E:\</span></pre>
+</div>
+</div>
+
+<div class="nobreak">
+<h2>Find a program's .exe name</h2>
+<p>Open the program, then <b>Task Manager → Details</b> and read the <b>Name</b> column. Or, in PowerShell:</p>
+<pre>Get-Process | Where-Object MainWindowTitle | Select-Object ProcessName, MainWindowTitle</pre>
+</div>
+
+<h2>Apply your changes</h2>
+<p>The lists are read only when the collector starts, so restart it after editing:
+<b>Task Scheduler → PhoneBox Games Tab → End</b>, then <b>Run</b>. Or, in PowerShell:</p>
+<pre>Stop-ScheduledTask 'PhoneBox Games Tab'; Start-ScheduledTask 'PhoneBox Games Tab'</pre>
+<div class="box nobreak">
+<p><b>Good to know.</b> When a program is added to <code>ignore.txt</code>, its old sessions are also removed from the
+history (week chart and recent sessions) the next time the collector starts.</p>
+</div>
+
+<h2>Troubleshooting</h2>
+<table class="nobreak">
+<tr><th>Problem</th><th>What to do</th></tr>
+<tr><td>Game not detected</td><td>Put its folder in <code>folders.txt</code> or its .exe in <code>include.txt</code>; make sure the game window is in front.</td></tr>
+<tr><td>App shown as a game</td><td>Add its .exe to <code>ignore.txt</code>.</td></tr>
+<tr><td>FPS stays empty</td><td>Your Windows user must be in the <b>Performance Log Users</b> group (then sign out and in).
+An administrator can add it with <code>Add-LocalGroupMember -SID S-1-5-32-559 -Member &lt;user&gt;</code>.</td></tr>
+<tr><td>Check what draws frames</td><td><code>bin\PhoneBoxGamesTab.exe --test</code> lists the frames per second of each program for 5 seconds.</td></tr>
+</table>
+</section>
+
+<!-- ============================== PORTUGUÊS ============================== -->
+<section class="page" lang="pt-BR">
+<span class="lang">Português (Brasil)</span>
+<h1>Aba Games: o que conta como jogo</h1>
+<p class="lead">A aba Games mostra FPS, tempo de jogo e dados do hardware do jogo que você está jogando. Um programa
+pequeno em segundo plano (o <b>coletor</b>, <code>PhoneBoxGamesTab.exe</code>) decide qual programa é o jogo. Três arquivos de
+texto deixam você ajustar essa decisão.</p>
+
+<h2>Como o coletor decide</h2>
+<p>A cada segundo ele olha a janela que está em primeiro plano. Esse programa vira o jogo quando está desenhando pelo
+menos 5 quadros por segundo e a primeira regra abaixo que se aplica diz sim:</p>
+<ol class="rules">
+<li><b>ignorar.txt</b>: nunca é jogo. Esta regra sempre vence.</li>
+<li><b>incluir.txt</b>: sempre é jogo.</li>
+<li><b>Apps da Microsoft Store / Xbox</b>: só é jogo se o catálogo da Microsoft Store disser que é jogo
+    (assim WhatsApp, Netflix e apps parecidos ficam de fora sozinhos).</li>
+<li><b>Pastas de jogos conhecidas</b>, em qualquer disco: <code>steamapps\common</code>, <code>Epic Games</code>, <code>XboxGames</code>,
+    <code>GOG Games</code>, <code>Ubisoft Game Launcher\games</code>, <code>EA Games</code>, <code>Riot Games</code>, <code>Games</code>, <code>Jogos</code>.</li>
+<li><b>pastas.txt</b>: qualquer programa dentro dessas pastas.</li>
+<li><b>Tela cheia</b>: uma janela que cobre o monitor inteiro (só quando não há outro jogo aberto).</li>
+</ol>
+<p>Navegadores, Discord, Teams, Wallpaper Engine, launchers (Steam, Epic, Battle.net, EA, Ubisoft, GOG) e programas
+parecidos já são ignorados por uma lista interna.</p>
+
+<h2>Os três arquivos</h2>
+<p>Ficam na pasta do Games Tab, ao lado da pasta <code>bin</code>, onde está o coletor. Os nomes em inglês (<code>include.txt</code>, <code>ignore.txt</code>, <code>folders.txt</code>) também valem.</p>
+<table>
+<tr><th>Arquivo</th><th>O que colocar</th><th>Exemplo de linha</th></tr>
+<tr><td><code>incluir.txt</code></td><td>Programas que sempre devem contar como jogo (instalados num lugar diferente, rodando em janela).</td><td><code>MeuJogo.exe</code></td></tr>
+<tr><td><code>ignorar.txt</code></td><td>Programas que nunca devem contar como jogo (ferramentas, players de vídeo, apps).</td><td><code>GPU-Z.exe</code></td></tr>
+<tr><td><code>pastas.txt</code></td><td>Pastas onde você instala jogos. Tudo dentro delas conta.</td><td><code>D:\Jogos</code> ou <code>E:\</code></td></tr>
+</table>
+<div class="grid">
+<div class="nobreak">
+<h3>Regras das linhas</h3>
+<p>Um item por linha. Tudo depois de <code>#</code> é comentário. Maiúsculas e minúsculas tanto faz, e o
+<code>.exe</code> é opcional (<code>GPU-Z</code> = <code>gpu-z.exe</code>). Pastas podem ter ou não a <code>\</code> no fim.</p>
+</div>
+<div class="nobreak">
+<h3>Exemplo de <code>ignorar.txt</code></h3>
+<pre>WhatsApp.Root.exe   <span class="c"># WhatsApp (Store)</span>
+GPU-Z.exe
+SyncTrayzor.exe     <span class="c"># sincronização no E:\</span></pre>
+</div>
+</div>
+
+<div class="nobreak">
+<h2>Descobrir o nome do .exe</h2>
+<p>Abra o programa e vá em <b>Gerenciador de Tarefas → Detalhes</b>; o nome está na coluna <b>Nome</b>. Ou, no PowerShell:</p>
+<pre>Get-Process | Where-Object MainWindowTitle | Select-Object ProcessName, MainWindowTitle</pre>
+</div>
+
+<h2>Aplicar as mudanças</h2>
+<p>As listas só são lidas quando o coletor inicia, então reinicie-o depois de editar:
+<b>Agendador de Tarefas → PhoneBox Games Tab → Finalizar</b> e depois <b>Executar</b>. Ou, no PowerShell:</p>
+<pre>Stop-ScheduledTask 'PhoneBox Games Tab'; Start-ScheduledTask 'PhoneBox Games Tab'</pre>
+<div class="box nobreak">
+<p><b>Bom saber.</b> Quando um programa entra no <code>ignorar.txt</code>, as sessões antigas dele também saem do histórico
+(gráfico da semana e sessões recentes) na próxima vez que o coletor iniciar.</p>
+</div>
+
+<h2>Problemas comuns</h2>
+<table class="nobreak">
+<tr><th>Problema</th><th>O que fazer</th></tr>
+<tr><td>Jogo não aparece</td><td>Coloque a pasta dele no <code>pastas.txt</code> ou o .exe no <code>incluir.txt</code>; confira se a janela do jogo está na frente.</td></tr>
+<tr><td>App aparece como jogo</td><td>Coloque o .exe dele no <code>ignorar.txt</code>.</td></tr>
+<tr><td>FPS fica vazio</td><td>Seu usuário do Windows precisa estar no grupo <b>Usuários de log de desempenho</b> (depois saia e entre de novo).
+Um administrador adiciona com <code>Add-LocalGroupMember -SID S-1-5-32-559 -Member &lt;usuário&gt;</code>.</td></tr>
+<tr><td>Ver quem desenha quadros</td><td><code>bin\PhoneBoxGamesTab.exe --test</code> mostra por 5 segundos os quadros por segundo de cada programa.</td></tr>
+</table>
+<p class="foot">PhoneBox Games Tab · community add-on for PhoneBox (github.com/ersinkoc/phonebox), not part of the official app · MIT license</p>
+</section>
+
+</body>
+</html>

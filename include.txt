@@ -1,0 +1,6 @@
+# Programs that must ALWAYS count as games (exe name, one per line; ".exe" is optional).
+# Useful for games installed outside the usual folders that run in a window.
+# Programas que SEMPRE contam como jogo (nome do .exe, um por linha).
+# Restart the collector after editing / Reinicie o coletor depois de editar.
+# Example / Exemplo:
+# MyGame.exe

@@ -1,0 +1,6 @@
+# Folders where you install games (one per line). Every program inside them counts as a game.
+# The usual folders (steamapps\common, Epic Games, XboxGames, GOG Games...) already work on any drive.
+# Pastas onde você instala jogos (uma por linha). Tudo dentro delas conta como jogo.
+# Restart the collector after editing / Reinicie o coletor depois de editar.
+# Example / Exemplo:
+# D:\Games

@@ -1,0 +1,6 @@
+# Programs that must NEVER count as games (exe name, one per line; ".exe" is optional).
+# Browsers, Discord, Teams, Wallpaper Engine, launchers and similar apps are already ignored.
+# Programas que NUNCA contam como jogo (nome do .exe, um por linha).
+# Restart the collector after editing / Reinicie o coletor depois de editar.
+# Example / Exemplo:
+# GPU-Z.exe

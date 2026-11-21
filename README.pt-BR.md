@@ -101,10 +101,13 @@ Opções de linha de comando do `bin\PhoneBoxGamesTab.exe`: `--port <n>`, `--con
 Tudo roda no seu PC e conversa só com o agente do PhoneBox em `127.0.0.1`, exceto:
 
 - **Catálogo da Microsoft Store** (`displaycatalog.mp.microsoft.com`): para apps da Store / Xbox, o coletor envia o nome
-  do pacote do app (por exemplo `Editora.Jogo_abc123`) para saber se é jogo e pegar o nome e a arte.
-- **Capas** são carregadas pelo celular dos servidores de imagem da Steam e da Microsoft.
+  do pacote do app (por exemplo `Editora.Jogo_abc123`) e o idioma e a região de exibição do Windows (por exemplo
+  `market=BR&languages=pt-br`) para saber se é jogo e pegar o nome e a arte no seu idioma.
+- **Capas** são carregadas pelo celular dos servidores de imagem da Steam e da Microsoft. O endereço de uma capa da
+  Steam contém o app ID do jogo, então o servidor de imagens da Steam sabe qual é o jogo.
 
-Nenhuma conta, chave ou dado pessoal é enviado.
+Nenhuma conta, chave ou arquivo do seu PC é enviado. As consultas acima mostram a esses servidores qual jogo você está
+jogando e o idioma e a região do seu Windows.
 
 ## Problemas comuns
 

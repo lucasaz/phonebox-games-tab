@@ -101,10 +101,13 @@ Command-line options of `bin\PhoneBoxGamesTab.exe`: `--port <n>`, `--console` (p
 Everything runs on your PC and talks only to the PhoneBox agent on `127.0.0.1`, except:
 
 - **Microsoft Store catalog** (`displaycatalog.mp.microsoft.com`): for Store / Xbox apps, the collector sends the app's
-  package name (for example `Publisher.Game_abc123`) to learn whether it is a game and to get its name and art.
-- **Cover images** are loaded by the phone from Steam's and Microsoft's image servers.
+  package name (for example `Publisher.Game_abc123`) and your Windows display language and region (for example
+  `market=BR&languages=pt-br`) to learn whether it is a game and to get its name and art in your language.
+- **Cover images** are loaded by the phone from Steam's and Microsoft's image servers. A Steam cover's URL contains the
+  game's Steam app ID, so Steam's image server can tell which game it is.
 
-No account, key or personal data is sent anywhere.
+No account, key or file from your PC is sent anywhere. The requests above do show these servers which game you are
+playing and your Windows language and region.
 
 ## Troubleshooting
 

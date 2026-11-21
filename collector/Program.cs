@@ -772,7 +772,7 @@ sealed class Tracker(int port)
         res = (null, null, null);
         try
         {
-            // only the package family name is sent; nothing about the user
+            // sends the package family name plus the Windows display language/region (README > Privacy)
             var (market, lang) = Locale();
             var url = "https://displaycatalog.mp.microsoft.com/v7.0/products/lookup?alternateId=PackageFamilyName&value="
                 + Uri.EscapeDataString(pfn) + $"&market={market}&languages={lang},en-us&fieldsTemplate=details";

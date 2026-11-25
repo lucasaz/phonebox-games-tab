@@ -103,6 +103,8 @@ Everything runs on your PC and talks only to the PhoneBox agent on `127.0.0.1`, 
 - **Microsoft Store catalog** (`displaycatalog.mp.microsoft.com`): for Store / Xbox apps, the collector sends the app's
   package name (for example `Publisher.Game_abc123`) and your Windows display language and region (for example
   `market=BR&languages=pt-br`) to learn whether it is a game and to get its name and art in your language.
+- **Steam store** (`store.steampowered.com`): for Steam games, the collector sends the game's Steam app ID to get the
+  address of its cover image.
 - **Cover images** are loaded by the phone from Steam's and Microsoft's image servers. A Steam cover's URL contains the
   game's Steam app ID, so Steam's image server can tell which game it is.
 

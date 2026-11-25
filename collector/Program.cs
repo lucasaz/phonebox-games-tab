@@ -499,6 +499,8 @@ sealed class Tracker(int port)
             var recentMs = _recent.SelectMany(r => r.ms).ToList();
             double low1 = LowPct(recentMs, 0.01), low01 = LowPct(recentMs, 0.001);
             double avg = _frameSecs > 0 ? _frames / _frameSecs : 0;
+            if (_game.AppId != null && SteamArt(_game.AppId) is { } art) _game.Img = art;
+            FixCovers();
             int sec = (int)(now - _game.Start).TotalSeconds;
             Push("game", new
             {
@@ -530,6 +532,7 @@ sealed class Tracker(int port)
         else if ((now - _lastIdlePush).TotalSeconds >= 30 || _idleCount == 0)
         {
             _lastIdlePush = now; _idleCount++;
+            FixCovers();
             Push("game", new
             {
                 on = false,
@@ -702,7 +705,7 @@ sealed class Tracker(int port)
             if (s != null)
             {
                 g.Store = "Steam"; g.AppId = s.Value.appid; g.Name = s.Value.name;
-                g.Img = $"https://cdn.cloudflare.steamstatic.com/steam/apps/{g.AppId}/header.jpg";
+                g.Img = SteamArt(g.AppId) ?? OldSteamCover + g.AppId + "/header.jpg"; // Tick replaces it once the store answers
                 g.SteamMin = SteamPlaytime(g.AppId);
             }
             else g.Name = dir;
@@ -732,6 +735,48 @@ sealed class Tracker(int port)
             g.Store = "Xbox";
             _ = Task.Run(() => StoreArt(g, pfn));
         }
+    }
+
+    // ---- Steam covers: newer games keep the image under a hashed path, so the old fixed URL returns 404; the right URL
+    // comes from the public store API, in the background (sends only the app ID, README > Privacy)
+    const string OldSteamCover = "https://cdn.cloudflare.steamstatic.com/steam/apps/";
+    static readonly Dictionary<string, (string? img, DateTime retry)> _steamArt = [];
+
+    /// <summary>The official cover URL, or null while the lookup has not finished (network error: retried after 10 min).</summary>
+    static string? SteamArt(string appid)
+    {
+        lock (_steamArt)
+        {
+            if (_steamArt.TryGetValue(appid, out var c) && (c.img != null || DateTime.Now < c.retry)) return c.img;
+            _steamArt[appid] = (null, DateTime.Now.AddMinutes(10));
+        }
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(_web.GetStringAsync($"https://store.steampowered.com/api/appdetails?appids={appid}&filters=basic").Result);
+                var r = doc.RootElement.GetProperty(appid);
+                string? img = r.GetProperty("success").GetBoolean() ? r.GetProperty("data").GetProperty("header_image").GetString() : null;
+                Program.Log($"Steam: cover {appid} -> {img ?? "none in the store"}");
+                lock (_steamArt) _steamArt[appid] = (img, DateTime.MaxValue);
+            }
+            catch (Exception ex) { Program.Log($"Steam: cover {appid}: {ex.Message}"); }
+        });
+        return null;
+    }
+
+    /// <summary>Replaces the old fixed URL in the sessions the tab shows (the last 6).</summary>
+    void FixCovers()
+    {
+        bool changed = false;
+        for (int i = Math.Max(0, _hist.Count - 6); i < _hist.Count; i++)
+        {
+            var s = _hist[i];
+            if (s.appid == null || s.img?.StartsWith(OldSteamCover, StringComparison.Ordinal) != true) continue;
+            if (SteamArt(s.appid) is not { } img) continue;
+            _hist[i] = s with { img = img }; changed = true;
+        }
+        if (changed) SaveHistory();
     }
 
     static readonly Dictionary<string, (string? name, string? img, string? kind)> _storeCache = [];

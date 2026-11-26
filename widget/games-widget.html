@@ -117,7 +117,7 @@ function sysCol(d) {
   c.append(el('div', 'lbl', 'GPU' + (gpu && gpu.name ? ' · ' + gpu.name.replace(/NVIDIA |GeForce |Laptop GPU/g, '').trim() : '')));
   c.append(meter(T('use'), gpu && gpu.util, 100, gpu && Math.round(gpu.util) + '%'));
   c.append(meter(T('temp'), gpu && gpu.temp, gpu && gpu.tempMax || 95, gpu && Math.round(gpu.temp) + ' °C', gpu && gpu.temp >= 85 ? '#f87171' : gpu && gpu.temp >= 75 ? '#fbbf24' : '#4ade80'));
-  c.append(meter('VRAM', gpu && gpu.vramUsed, gpu && gpu.vramTotal || 1, gpu && nf1.format(gpu.vramUsed) + '/' + (gpu.vramTotal || '?') + ' GB'));
+  c.append(meter('VRAM', gpu && gpu.vramUsed, gpu && gpu.vramTotal || 1, gpu && nf1.format(gpu.vramUsed) + '/' + (gpu.vramTotal ? Math.round(gpu.vramTotal) : '?') + ' GB'));
   if (gpu && gpu.power != null) c.append(meter(T('power'), gpu.power, gpu.powerLimit || 130, Math.round(gpu.power) + ' W'));
   c.append(el('div', 'sep'));
   c.append(el('div', 'lbl', T('cpumem')));
